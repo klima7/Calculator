@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="insert_top">1dp</dimen>
-    <dimen name="insert_bottom">1dp</dimen>
-    <dimen name="horizontal_margin">5dp</dimen>
-    <dimen name="vertical_margin">5dp</dimen>
+    <dimen name="insert_top">0dp</dimen>
+    <dimen name="insert_bottom">0dp</dimen>
+    <dimen name="horizontal_margin">0dp</dimen>
+    <dimen name="vertical_margin">0dp</dimen>
 </resources>

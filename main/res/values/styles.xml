@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="calculator_button">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
@@ -8,4 +9,16 @@
         <item name="android:layout_marginHorizontal">@dimen/horizontal_margin</item>
         <item name="android:layout_marginVertical">@dimen/vertical_margin</item>
     </style>
+
+    <style name="calculator_display">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">3.14159</item>
+        <item name="android:textAlignment">viewEnd</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:background">@drawable/display_border</item>
+        <item name="android:layout_marginHorizontal">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
 </resources>
