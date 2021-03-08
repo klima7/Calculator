@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class CalculatorActivity extends AppCompatActivity {
@@ -145,7 +144,7 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void bkspClicked(View view) {
-        pendingClean = false;
+        cleanIfPending();
         setText(getText().substring(0, getText().length()-1));
         if(getText().length() == 0)
             setNumber(0);
@@ -247,7 +246,7 @@ public class CalculatorActivity extends AppCompatActivity {
 
     private String num2Str(double number) {
         if(number % 1 == 0) {
-            return "" + (int)number;
+            return "" + (long)number;
         }
         else {
             return "" + number;
