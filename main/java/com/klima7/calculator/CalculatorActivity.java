@@ -149,7 +149,7 @@ public class CalculatorActivity extends AppCompatActivity {
     public void bkspClicked(View view) {
         cleanIfPending();
         setText(getText().substring(0, getText().length()-1));
-        if(getText().length() == 0)
+        if(getText().length() == 0 || getText().equals("-"))
             setNumber(0);
     }
 
