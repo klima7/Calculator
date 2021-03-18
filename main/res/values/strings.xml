@@ -8,4 +8,6 @@
     <string name="title_activity_about">AboutActivity</string>
     <string name="cclicked">Registers reseted</string>
     <string name="about">Author: Lukasz Klimkiewicz\nIndex number: 222467\nVersion: 1.0.0</string>
+    <string name="division_error">Unable to divide by zero</string>
+    <string name="sqrt_error">Square root doesn\'t exist</string>
 </resources>

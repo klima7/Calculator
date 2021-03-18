@@ -116,7 +116,10 @@ public class CalculatorActivity extends AppCompatActivity {
 
         try {
             if (op.equalsIgnoreCase("sqrt")) {
-                if(result < 0) throw new IllegalArgumentException("SQRT ERROR");
+                if(result < 0) {
+                    String message = getResources().getString(R.string.sqrt_error);
+                    throw new IllegalArgumentException(message);
+                }
                 result = Math.sqrt(result);
             }
             else if (op.equalsIgnoreCase("x^2")) result = result*result;
@@ -132,7 +135,8 @@ public class CalculatorActivity extends AppCompatActivity {
             currentOp = null;
 
         } catch(IllegalArgumentException e) {
-            setText(e.getMessage());
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            setNumber(0);
             result = 0;
             pendingOp = null;
             currentOp = null;
@@ -227,7 +231,10 @@ public class CalculatorActivity extends AppCompatActivity {
             else if (pendingOp.equalsIgnoreCase("*"))
                 opResult = result * operand;
             else if (pendingOp.equalsIgnoreCase("/")) {
-                if(operand == 0) throw new IllegalArgumentException("DIVISION BY ZERO ERROR");
+                if(operand == 0) {
+                    String message = getResources().getString(R.string.division_error);
+                    throw new IllegalArgumentException(message);
+                }
                 opResult = result / operand;
             }
             else if (pendingOp.equalsIgnoreCase("x^y"))
@@ -239,11 +246,11 @@ public class CalculatorActivity extends AppCompatActivity {
             pendingClean = true;
 
         } catch(IllegalArgumentException e) {
-            setText(e.getMessage());
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            setNumber(0);
             result = 0;
             pendingOp = null;
             currentOp = null;
-            pendingClean = true;
         }
     }
 
