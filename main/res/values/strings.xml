@@ -6,5 +6,6 @@
     <string name="about_menu_option">About</string>
     <string name="exit_menu_option">exit</string>
     <string name="title_activity_about">AboutActivity</string>
-    <string name="about">Author: Lukasz Klimkiewicz\nIndex number: 222467</string>
+    <string name="cclicked">Registers reseted</string>
+    <string name="about">Author: Lukasz Klimkiewicz\nIndex number: 222467\nVersion: 1.0.0</string>
 </resources>

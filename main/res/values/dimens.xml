@@ -4,4 +4,10 @@
     <dimen name="insert_bottom">0dp</dimen>
     <dimen name="horizontal_margin">0dp</dimen>
     <dimen name="vertical_margin">0dp</dimen>
+
+    <dimen name="menu_option_size">20sp</dimen>
+    <dimen name="menu_caption_size">50sp</dimen>
+    <dimen name="about_text_size">20sp</dimen>
+    <dimen name="keys_text_size">18sp</dimen>
+    <dimen name="display_text_size">30sp</dimen>
 </resources>

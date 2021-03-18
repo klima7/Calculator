@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="@string/calculator"
         android:textAlignment="center"
-        android:textSize="25sp" />
+        android:textSize="@dimen/menu_caption_size" />
 
     <Space
         android:layout_width="match_parent"
@@ -22,26 +22,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="simpleClicked"
-        android:text="@string/simple_menu_option" />
+        android:text="@string/simple_menu_option"
+        android:textSize="@dimen/menu_option_size" />
 
     <Button
         android:id="@+id/button21"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="advancedClicked"
-        android:text="@string/advanced_menu_option" />
+        android:text="@string/advanced_menu_option"
+        android:textSize="@dimen/menu_option_size" />
 
     <Button
         android:id="@+id/button22"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="aboutClicked"
-        android:text="@string/about_menu_option" />
+        android:text="@string/about_menu_option"
+        android:textSize="@dimen/menu_option_size" />
 
     <Button
         android:id="@+id/button23"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="exitClicked"
-        android:text="@string/exit_menu_option" />
+        android:text="@string/exit_menu_option"
+        android:textSize="@dimen/menu_option_size" />
 </LinearLayout>

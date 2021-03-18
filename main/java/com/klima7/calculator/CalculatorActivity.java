@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,6 +28,12 @@ public class CalculatorActivity extends AppCompatActivity {
     protected void onCreate(Bundle inState) {
         super.onCreate(inState);
 
+        boolean advanced = getIntent().getBooleanExtra(CalculatorActivity.ADVANCED, true);
+        setContentView(advanced ? R.layout.advanced_layout : R.layout.simple_layout);
+
+        display = findViewById(R.id.calculator_display);
+        setNumber(0);
+
         if(inState != null) {
             result = inState.getDouble("result");
             memory = inState.getDouble("memory");
@@ -34,13 +41,8 @@ public class CalculatorActivity extends AppCompatActivity {
             currentOp = inState.getString("currentOp");
             pendingClean = inState.getBoolean("pendingClean");
             lastClickTime = inState.getLong("lastClickTime");
+            setText(inState.getString("display"));
         }
-
-        boolean advanced = getIntent().getBooleanExtra(CalculatorActivity.ADVANCED, true);
-        setContentView(advanced ? R.layout.advanced_layout : R.layout.simple_layout);
-
-        display = (TextView)findViewById(R.id.calculator_display);
-        setNumber(0);
     }
 
     @Override
@@ -53,6 +55,7 @@ public class CalculatorActivity extends AppCompatActivity {
         outState.putString("currentOp", currentOp);
         outState.putBoolean("pendingClean", pendingClean);
         outState.putLong("lastClickTime", lastClickTime);
+        outState.putString("display", display.getText().toString());
     }
 
     public void numberClicked(View view) {
@@ -160,6 +163,10 @@ public class CalculatorActivity extends AppCompatActivity {
             currentOp = null;
             pendingClean = false;
             result = 0;
+
+            String message = getResources().getString(R.string.cclicked);
+            Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
+            toast.show();
         }
         else {
             setNumber(0);
@@ -240,10 +247,6 @@ public class CalculatorActivity extends AppCompatActivity {
         }
     }
 
-    private void debug() {
-        Log.d("Hello", "pendingOp=" + pendingOp + " currentOp=" + currentOp + " result=" + result + " display=" + getText() + " clean=" + pendingClean);
-    }
-
     private String num2Str(double number) {
         if(number % 1 == 0) {
             return "" + (long)number;
@@ -278,5 +281,9 @@ public class CalculatorActivity extends AppCompatActivity {
             pendingClean = false;
             setNumber(0);
         }
+    }
+
+    private void debug() {
+        Log.d("Hello", "pendingOp=" + pendingOp + " currentOp=" + currentOp + " result=" + result + " display=" + getText() + " clean=" + pendingClean);
     }
 }
