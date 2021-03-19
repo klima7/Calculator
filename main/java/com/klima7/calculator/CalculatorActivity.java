@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class CalculatorActivity extends AppCompatActivity {
 
     public static final String ADVANCED = "Advanced";
@@ -17,8 +20,8 @@ public class CalculatorActivity extends AppCompatActivity {
 
     private TextView display;
 
-    private double result = 0;
-    private double memory = 0;
+    private BigDecimal result = BigDecimal.valueOf(0);
+    private BigDecimal memory = BigDecimal.valueOf(0);
     private String pendingOp = null;
     private String currentOp = null;
     private boolean pendingClean = false;
@@ -35,8 +38,8 @@ public class CalculatorActivity extends AppCompatActivity {
         setNumber(0);
 
         if(inState != null) {
-            result = inState.getDouble("result");
-            memory = inState.getDouble("memory");
+            result = new BigDecimal(inState.getString("result"));
+            memory = new BigDecimal(inState.getString("memory"));
             pendingOp = inState.getString("pendingOp");
             currentOp = inState.getString("currentOp");
             pendingClean = inState.getBoolean("pendingClean");
@@ -49,8 +52,8 @@ public class CalculatorActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putDouble("result", result);
-        outState.putDouble("memory", memory);
+        outState.putString("result", result.toString());
+        outState.putString("memory", memory.toString());
         outState.putString("pendingOp", pendingOp);
         outState.putString("currentOp", currentOp);
         outState.putBoolean("pendingClean", pendingClean);
@@ -116,19 +119,19 @@ public class CalculatorActivity extends AppCompatActivity {
 
         try {
             if (op.equalsIgnoreCase("sqrt")) {
-                if(result < 0) {
+                if(result.compareTo(BigDecimal.ZERO) < 0) {
                     String message = getResources().getString(R.string.sqrt_error);
                     throw new IllegalArgumentException(message);
                 }
-                result = Math.sqrt(result);
+                result = BigDecimal.valueOf(Math.sqrt(result.doubleValue()));
             }
-            else if (op.equalsIgnoreCase("x^2")) result = result*result;
-            else if (op.equalsIgnoreCase("sin")) result = Math.sin(result);
-            else if (op.equalsIgnoreCase("cos")) result = Math.cos(result);
-            else if (op.equalsIgnoreCase("tan")) result = Math.tan(result);
-            else if (op.equalsIgnoreCase("ln")) result = Math.log(result);
-            else if (op.equalsIgnoreCase("log")) result = Math.log10(result);
-            else if (op.equalsIgnoreCase("%")) result = result/100;
+            else if (op.equalsIgnoreCase("x^2")) result = result.multiply(result);
+            else if (op.equalsIgnoreCase("sin")) result = BigDecimal.valueOf(Math.sin(result.doubleValue()));
+            else if (op.equalsIgnoreCase("cos")) result = BigDecimal.valueOf(Math.cos(result.doubleValue()));
+            else if (op.equalsIgnoreCase("tan")) result = BigDecimal.valueOf(Math.tan(result.doubleValue()));
+            else if (op.equalsIgnoreCase("ln")) result = BigDecimal.valueOf(Math.log(result.doubleValue()));
+            else if (op.equalsIgnoreCase("log")) result = BigDecimal.valueOf(Math.log10(result.doubleValue()));
+            else if (op.equalsIgnoreCase("%")) result = result.divide(BigDecimal.valueOf(100));
 
             setNumber(result);
             pendingClean = true;
@@ -137,7 +140,7 @@ public class CalculatorActivity extends AppCompatActivity {
         } catch(IllegalArgumentException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             setNumber(0);
-            result = 0;
+            result = BigDecimal.ZERO;
             pendingOp = null;
             currentOp = null;
             pendingClean = true;
@@ -166,7 +169,7 @@ public class CalculatorActivity extends AppCompatActivity {
             pendingOp = null;
             currentOp = null;
             pendingClean = false;
-            result = 0;
+            result = BigDecimal.ZERO;
 
             String message = getResources().getString(R.string.cclicked);
             Toast toast = Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT);
@@ -183,14 +186,13 @@ public class CalculatorActivity extends AppCompatActivity {
         pendingOp = null;
         currentOp = null;
         pendingClean = false;
-        result = 0;
-        memory = 0;
+        result = BigDecimal.ZERO;
+        memory = BigDecimal.ZERO;
         setNumber(0);
     }
 
     public void plusMinusClicked(View view) {
-        double number = getNumber();
-        if(number == 0)
+        if(getNumber().equals(BigDecimal.ZERO))
             return;
 
         if(getText().startsWith("-"))
@@ -204,7 +206,7 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     public void memoryClearClicked(View view) {
-        memory = 0;
+        memory = BigDecimal.ZERO;
     }
 
     public void memoryRecallClicked(View view) {
@@ -222,23 +224,25 @@ public class CalculatorActivity extends AppCompatActivity {
 
     private void performOperation() {
         try {
-            double operand = getNumber();
-            double opResult = 0;
+            BigDecimal operand = getNumber();
+            BigDecimal opResult = BigDecimal.ZERO;
             if (pendingOp.equalsIgnoreCase("+"))
-                opResult = result + operand;
+                opResult = result.add(operand);
             else if (pendingOp.equalsIgnoreCase("-"))
-                opResult = result - operand;
+                opResult = result.subtract(operand);
             else if (pendingOp.equalsIgnoreCase("*"))
-                opResult = result * operand;
+                opResult = result.multiply(operand);
             else if (pendingOp.equalsIgnoreCase("/")) {
-                if(operand == 0) {
+                if(operand.equals(BigDecimal.ZERO)) {
                     String message = getResources().getString(R.string.division_error);
                     throw new IllegalArgumentException(message);
                 }
-                opResult = result / operand;
+                String ans = result.divide(operand, DISPLAY_MAX_DIGITS, RoundingMode.HALF_EVEN).toString();
+                ans = removeUnnecessaryZeros(ans);
+                opResult = new BigDecimal(ans);
             }
             else if (pendingOp.equalsIgnoreCase("x^y"))
-                opResult = Math.pow(result, operand);
+                opResult = result.pow(operand.intValue());
             pendingOp = null;
 
             setNumber(opResult);
@@ -248,7 +252,7 @@ public class CalculatorActivity extends AppCompatActivity {
         } catch(IllegalArgumentException e) {
             Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             setNumber(0);
-            result = 0;
+            result = BigDecimal.ZERO;
             pendingOp = null;
             currentOp = null;
         }
@@ -267,11 +271,11 @@ public class CalculatorActivity extends AppCompatActivity {
         return display.getText().toString();
     }
 
-    private double getNumber() {
+    private BigDecimal getNumber() {
         try {
-            return Double.parseDouble(getText());
+            return new BigDecimal(getText());
         } catch(NumberFormatException e) {
-            return 0;
+            return BigDecimal.valueOf(0);
         }
     }
 
@@ -283,11 +287,27 @@ public class CalculatorActivity extends AppCompatActivity {
         setText(num2Str(number));
     }
 
+    private void setNumber(BigDecimal number) {
+        String text = number.toString();
+        if(text.length() > DISPLAY_MAX_DIGITS)
+            text = text.substring(0, DISPLAY_MAX_DIGITS);
+        setText(text);
+    }
+
     private void cleanIfPending() {
         if(pendingClean) {
             pendingClean = false;
             setNumber(0);
         }
+    }
+
+    String removeUnnecessaryZeros(String number) {
+        if(number.contains(".")) {
+            while(number.charAt(number.length()-1) == '0') {
+                number = number.substring(0, number.length()-1);
+            }
+        }
+        return number;
     }
 
     private void debug() {
