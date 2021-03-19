@@ -52,8 +52,8 @@ public class CalculatorActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString("result", result.toString());
-        outState.putString("memory", memory.toString());
+        outState.putString("result", result.toPlainString());
+        outState.putString("memory", memory.toPlainString());
         outState.putString("pendingOp", pendingOp);
         outState.putString("currentOp", currentOp);
         outState.putBoolean("pendingClean", pendingClean);
@@ -118,13 +118,7 @@ public class CalculatorActivity extends AppCompatActivity {
         result = getNumber();
 
         try {
-            if (op.equalsIgnoreCase("sqrt")) {
-                if(result.compareTo(BigDecimal.ZERO) < 0) {
-                    String message = getResources().getString(R.string.sqrt_error);
-                    throw new IllegalArgumentException(message);
-                }
-                result = BigDecimal.valueOf(Math.sqrt(result.doubleValue()));
-            }
+            if (op.equalsIgnoreCase("sqrt")) result = BigDecimal.valueOf(Math.sqrt(result.doubleValue()));
             else if (op.equalsIgnoreCase("x^2")) result = result.multiply(result);
             else if (op.equalsIgnoreCase("sin")) result = BigDecimal.valueOf(Math.sin(result.doubleValue()));
             else if (op.equalsIgnoreCase("cos")) result = BigDecimal.valueOf(Math.cos(result.doubleValue()));
@@ -133,12 +127,21 @@ public class CalculatorActivity extends AppCompatActivity {
             else if (op.equalsIgnoreCase("log")) result = BigDecimal.valueOf(Math.log10(result.doubleValue()));
             else if (op.equalsIgnoreCase("%")) result = result.divide(BigDecimal.valueOf(100));
 
-            setNumber(result);
-            pendingClean = true;
-            currentOp = null;
+            if(numberTooBig(result)) {
+                String message = getResources().getString(R.string.result_too_big);
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                setNumber(0);
+                result = BigDecimal.ZERO;
+            }
+            else {
+                setNumber(result);
+                pendingClean = true;
+                currentOp = null;
+            }
 
         } catch(IllegalArgumentException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            String message = getResources().getString(R.string.invalid_operation);
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             setNumber(0);
             result = BigDecimal.ZERO;
             pendingOp = null;
@@ -233,11 +236,7 @@ public class CalculatorActivity extends AppCompatActivity {
             else if (pendingOp.equalsIgnoreCase("*"))
                 opResult = result.multiply(operand);
             else if (pendingOp.equalsIgnoreCase("/")) {
-                if(operand.equals(BigDecimal.ZERO)) {
-                    String message = getResources().getString(R.string.division_error);
-                    throw new IllegalArgumentException(message);
-                }
-                String ans = result.divide(operand, DISPLAY_MAX_DIGITS, RoundingMode.HALF_EVEN).toString();
+                String ans = result.divide(operand, DISPLAY_MAX_DIGITS, RoundingMode.HALF_EVEN).toPlainString();
                 ans = removeUnnecessaryZeros(ans);
                 opResult = new BigDecimal(ans);
             }
@@ -245,17 +244,32 @@ public class CalculatorActivity extends AppCompatActivity {
                 opResult = result.pow(operand.intValue());
             pendingOp = null;
 
-            setNumber(opResult);
-            result = opResult;
-            pendingClean = true;
+            if(numberTooBig(opResult)) {
+                String message = getResources().getString(R.string.result_too_big);
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                setNumber(0);
+                result = BigDecimal.ZERO;
+            }
+            else {
+                setNumber(opResult);
+                result = opResult;
+                pendingClean = true;
+            }
 
-        } catch(IllegalArgumentException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch(IllegalArgumentException | ArithmeticException e) {
+            String message = getResources().getString(R.string.invalid_operation);
+            Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
             setNumber(0);
             result = BigDecimal.ZERO;
             pendingOp = null;
             currentOp = null;
         }
+    }
+
+    boolean numberTooBig(BigDecimal decimal) {
+        String text = decimal.toPlainString();
+        int dotPos = text.contains(".") ? text.indexOf('.') : text.length();
+        return dotPos > DISPLAY_MAX_DIGITS;
     }
 
     private String num2Str(double number) {
@@ -288,7 +302,7 @@ public class CalculatorActivity extends AppCompatActivity {
     }
 
     private void setNumber(BigDecimal number) {
-        String text = number.toString();
+        String text = number.toPlainString();
         if(text.length() > DISPLAY_MAX_DIGITS)
             text = text.substring(0, DISPLAY_MAX_DIGITS);
         setText(text);
